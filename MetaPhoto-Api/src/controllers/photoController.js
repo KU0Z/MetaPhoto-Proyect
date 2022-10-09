@@ -13,8 +13,8 @@ exports.getPhotos = async (req, res, next) => {
     title: req.query.title ? req.query.title : "",
     albumTitle: req.query.albumTitle ? req.query.albumTitle : "",
     albumUserEmail: req.query.albumUserEmail ? req.query.albumUserEmail : "",
-    limit: parseInt(query.limit ? req.query.limit : "0"),
-    offset: parseInt(query.offset ? req.query.offset : "0")
+    limit: parseInt(req.query.limit ? req.query.limit : "25"),
+    offset: parseInt(req.query.offset ? req.query.offset : "0")
   };
   // Validate security
   let photos = await axios.get(url+'photos');
@@ -81,7 +81,28 @@ exports.getPhotos = async (req, res, next) => {
     photos=photos.filter(photos => photos.album.user.email.includes(params.albumUserEmail)) 
   }
   console.log(req.query)
-  //photos=photos.filter(photos => photos.title.includes(params.albumTitle)) 
+  //1.3: The pagination
+  console.log("filtering albumUserEmail "+photos.length)
+
+  let offset =params.offset
+  if (offset<0) {
+    offset = 0 
+  } 
+  if (offset>=photos.length) {
+    offset = 0 
+  } 
+  
+  let limit = offset+ params.limit
+  if (limit<=offset) {
+    limit = offset+25
+  }
+  if (limit>=photos.length) {
+    limit = photos.length
+  } 
+  console.log("offset:",offset)
+  console.log("limit:",limit)
+  photos = photos.slice(offset,limit);
+
   res.status(200).json({ success: true, count:photos.length, payload: photos});
   //res.status(200).json(responses.webResponse(true, 'Get Photos'));
   //Sincere@april.biz

@@ -6,11 +6,22 @@ const url = 'https://jsonplaceholder.typicode.com/'
 
 exports.getPhotos = async (req, res, next) => {
  try {
+
+
+  //Get params if exist
+  let params = {
+    title: req.query.title ? req.query.title : "",
+    albumTitle: req.query.albumTitle ? req.query.albumTitle : "",
+    albumUserEmail: req.query.albumUserEmail ? req.query.albumUserEmail : "",
+    limit: parseInt(query.limit ? req.query.limit : "0"),
+    offset: parseInt(query.offset ? req.query.offset : "0")
+  };
   // Validate security
   let photos = await axios.get(url+'photos');
   let users = await axios.get(url+'users');
   //users=JSON.parse(JSON.stringify(users.data))
   let albums = await axios.get(url+'albums');
+  
   console.log(users.data)  
   // albums = albums.data.map((albums,i) => {
   //                 albums.user =users.data.find(x => x.id === albums.userId)
@@ -34,10 +45,10 @@ exports.getPhotos = async (req, res, next) => {
                       title:photos.title,
                       url:photos.url,
                       thumbnailUrl:photos.thumbnailUrl,
-                      albums:albums.find(x => x.id === photos.albumId)
+                      album:albums.find(x => x.id === photos.albumId)
             }
                     })  
-  console.log(albums)               
+  console.log(photos)               
 //        = {
 //         photos:photos.data.ma,
 //         albums:albums.data,
@@ -51,8 +62,30 @@ exports.getPhotos = async (req, res, next) => {
   //           users:users
   //   }
   //   }) 
-  res.status(200).json({ success: true, payload: photos});
+
+  //1.2: The filtering
+  console.log(params)
+  if (params.title !== "" ) {
+    console.log("filtering title")
+    photos=photos.filter(photos => photos.title.includes(params.title)) 
+    console.log(photos)
+    
+  }
+  if (params.albumTitle !== "") {
+    console.log("filtering albumTitle")
+    photos=photos.filter(photos => photos.album.title.includes(params.albumTitle)) 
+  }
+  if (params.albumUserEmail !== "") {
+    console.log("filtering albumUserEmail")
+    console.log(params.albumUserEmail)
+    photos=photos.filter(photos => photos.album.user.email.includes(params.albumUserEmail)) 
+  }
+  console.log(req.query)
+  //photos=photos.filter(photos => photos.title.includes(params.albumTitle)) 
+  res.status(200).json({ success: true, count:photos.length, payload: photos});
   //res.status(200).json(responses.webResponse(true, 'Get Photos'));
+  //Sincere@april.biz
+  //Sincere@april.biz.
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Something failed!' });

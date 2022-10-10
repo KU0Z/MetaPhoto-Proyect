@@ -102,7 +102,7 @@ exports.getPhotos = async (req, res, next) => {
   } 
   console.log("offset:",offset)
   console.log("limit:",limit)
-  let totalPages=parseInt(photos.length/params.limit)
+  let totalPages=parseInt((Math.ceil(photos.length/params.limit)))
   photos = photos.slice(offset,limit);
 
   res.status(200).json({ success: true, offset:offset,limit:limit,totalItems:totalItems,totalPages:totalPages, payload: photos});

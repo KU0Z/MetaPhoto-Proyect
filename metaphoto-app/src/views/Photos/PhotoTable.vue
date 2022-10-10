@@ -37,6 +37,7 @@
         >
         <v-text-field
           v-model="albumtitle"
+          :counter="255"
           :rules="albumtitleRules"
           label="Album Title"
           
@@ -48,6 +49,7 @@
         >
         <v-text-field
           v-model="email"
+          :counter="255"
           :rules="emailRules"
           label="E-mail"
           
@@ -61,10 +63,12 @@
           md="4"
         >
         <v-text-field
-          v-model="name"
-          :counter="255"
-          :rules="nameRules"
-          label="Title"
+          v-model="limit"
+          :default="25"
+          min="1"
+          :rules="limitRules"
+          label="Limit"
+          type="number"
           
         ></v-text-field>
         </v-col>
@@ -76,9 +80,9 @@
           :disabled="!valid"
           color="success"
           class="mr-4"
-          @click="validate"
+          @click="applyfilter()"
         >
-        Apply Filter
+        Apply Filter {{limit}}
         </v-btn>
         </v-col>
         <v-col
@@ -88,28 +92,14 @@
         <v-btn
           color="error"
           class="mr-4"
-          @click="reset"
+          @click="resetfilter()"
         >
           Reset Filter
         </v-btn>
         </v-col>
 
       </v-row>
-      
-        
-
-        
-        
-
-        <v-select
-          v-model="select"
-          :items="items"
-          :rules="[v => !!v || 'Item is required']"
-          label="Item"
-          required
-        ></v-select>
-
-        
+              
 
 
       </v-form>
@@ -151,6 +141,7 @@
               <div > <strong>Album: </strong>{{item.album.title}}</div>
               <div> <strong>User:</strong> {{item.album.user.name}}</div>
               <div > <strong>#: </strong>{{item.id}}</div>
+              <div > <strong>#Album: </strong>{{item.album.id}}</div>
             </v-card-subtitle>
             <v-card-actions>
               <v-btn
@@ -364,18 +355,23 @@
       valid: true,
       name: '',
       nameRules: [
-        v => !!v || 'Title is required',
-        v => (v && v.length <= 255) || 'Name must be less than 255 characters',
+        //v => !!v || 'Title is required',
+        v => (v || '').length  <= 255  || 'Name must be less than 255 characters',
+      ],
+      limitRules: [
+        //v => !!v || 'Title is required',
+        v => ((v )  > 0 )  || 'limit must be more than 0',
+        v => ((v )  <= 500 )  || 'limit must be less than 5000',
       ],
       albumtitle : '',
       albumtitleRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 255) || 'Name must be less than 255 characters',
+        //v => !!v || 'Name is required',
+        v => (v || '').length  <= 255 || 'Album Title must be less than 255 characters',
       ],
       email: '',
       emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+        //v => !!v || 'E-mail is required',
+        v => ( (v || '').length == 0 || /.+@.+\..+/.test(v))  || 'E-mail must be valid',
       ],
       select: null,
       items: [
@@ -426,6 +422,8 @@
       },
       reset () {
         this.$refs.form.reset()
+        this.$refs.form.resetValidation()
+        console.log(this.$refs.form)
       },
       resetValidation () {
         this.$refs.form.resetValidation()
@@ -436,7 +434,7 @@
         console.log(this.page)
         this.offset=(this.limit*(this.page-1))
         let self=this
-        this.loadPhotos(self.name,self.albumTitle,self.email,self.offset,self.limit)
+        this.loadPhotos(self.name,self.albumtitle,self.email,self.offset,self.limit)
       },
       nextPage() {
         console.log('nextPage')
@@ -446,6 +444,22 @@
       previousPage() {
         console.log('nextPage')
         console.log(this.page)
+      },
+      applyfilter() {
+        let self=this
+        self.offset=0
+        this.loadPhotos(self.name,self.albumtitle,self.email,self.offset,self.limit)
+      },
+      resetfilter() {
+        let self=this
+        this.name = ""
+        this.albumtitle = ""
+        this.email = ""
+        this.limit=25
+        this.limit=25
+        this.offset=0
+        this.resetValidation()
+        this.loadPhotos(self.name,self.albumtitle,self.email,self.offset,self.limit)
       },
       loadPhotos (title,albumTitle,albumUserEmail,offset,limit) {
         let params ={title:title,albumTitle:albumTitle,albumUserEmail:albumUserEmail,offset:offset,limit:limit }
@@ -472,24 +486,6 @@
       loadBeers(){
         let self=this
         this.loadPhotos(self.name,self.albumTitle,self.email,self.offset,self.limit)
-        // this.axios.get('photos')
-        //   .then((res) => {            
-        //       res.data.payload.map((photos) => {
-        //             photos.show =false
-        //             return {  photos
-        //             }
-        //             })
-        //       console.log(res.data)
-        //       self.cards=res.data.payload
-        //       self.totalItems=res.data.totalPages
-        //       //self.contries = JSON.parse(self.contries)
-        //       //self.types = JSON.parse(self.types)
-             
-        //   })
-        //   .catch((err) => {
-        //      console.error(err)
-  
-        //   })
 
       }
       

@@ -1,7 +1,7 @@
 <template>
 <div>
     <v-bottom-navigation
-    :background-color="primary"
+    background-color="primary"
     dark
     shift
   >

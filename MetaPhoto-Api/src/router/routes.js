@@ -10,6 +10,6 @@ router.get('/healthcheck', (req, res) => {
 });
 
 // Get survey by subdomain
-router.get('/photos/:photosId', photoController.getPhotos);
+router.get('/photos', photoController.getPhotos);
 
 module.exports = router;

@@ -14,11 +14,7 @@
       app
     >
       <v-list dense>
-        <v-list-item-group
-          v-model="group"
-          active-class="deep-purple--text text--accent-4"
-        >
-            <v-list-item
+        <v-list-item
             v-for="item in items"
             :key="item.id"
             @click="$router.push (item.to)"
@@ -32,7 +28,6 @@
                 <v-list-item-title>{{ item.text }}</v-list-item-title>
             </v-list-item-content>
             </v-list-item>
-        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>    
   </div>

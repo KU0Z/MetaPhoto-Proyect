@@ -1,10 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import Vue from 'vue'
+import  VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login/LoginView.vue'
 import PhotoIndex from '../views/Photos/PhotoIndex.vue'
 import RegisterIndex from '../views/Register/RegisterIndex.vue'
 import NotFound from '../views/NotFound/404Index.vue'
-
+Vue.use(VueRouter) 
 const routes = [
   {
     path: '/',
@@ -35,14 +36,14 @@ const routes = [
     component: RegisterIndex 
   },
   {
-    path: '/:pathMatch(.*)*',
+    path: '/*',
     name: 'NotFound',
     component: NotFound
   }
 ]
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+const router = new VueRouter({
+  mode: 'history',
   routes
 })
 

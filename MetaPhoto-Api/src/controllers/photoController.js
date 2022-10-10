@@ -83,6 +83,7 @@ exports.getPhotos = async (req, res, next) => {
   console.log(req.query)
   //1.3: The pagination
   console.log("filtering albumUserEmail "+photos.length)
+  let totalItems=photos.length
 
   let offset =params.offset
   if (offset<0) {
@@ -101,9 +102,10 @@ exports.getPhotos = async (req, res, next) => {
   } 
   console.log("offset:",offset)
   console.log("limit:",limit)
+  let totalPages=parseInt(photos.length/params.limit)
   photos = photos.slice(offset,limit);
 
-  res.status(200).json({ success: true, count:photos.length, payload: photos});
+  res.status(200).json({ success: true, offset:offset,limit:limit,totalItems:totalItems,totalPages:totalPages, payload: photos});
   //res.status(200).json(responses.webResponse(true, 'Get Photos'));
   //Sincere@april.biz
   //Sincere@april.biz.

@@ -28,20 +28,7 @@ node ("${NODE}"){
                 env.DOCKER_IMAGE = "${DOCKER_REPO}/${BUCKET_FOLDER}:${IMAGE_VERSION}"
                 env.ECR_USER = "AWS"
             }
-            stage('build'){
-                sh "cd ${WORKSPACE} && sudo docker build -t ${DOCKER_IMAGE} ."
-            }
-            stage('push'){
-                sh "aws ecr get-login-password --region ${REGION} | sudo docker login --username ${ECR_USER} --password-stdin ${DOCKER_REPO}"
-                sh "docker push ${DOCKER_IMAGE}"
-            }
-            stage('deploy service'){
-                sh "aws ecs update-service --cluster ${CLUSTER} --service ${SERVICE} --force-new-deployment  "
-            }
-            stage('deploy service'){
-                sh "docker rmi ${DOCKER_IMAGE}"
-                
-            }
+
         }
     }
     catch (error) {

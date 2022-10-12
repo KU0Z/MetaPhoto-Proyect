@@ -30,6 +30,7 @@ node ("${NODE}"){
             }
             stage('build'){
                 sh "cd ${WORKSPACE} && sudo docker build -t ${DOCKER_IMAGE} ."
+            }
             stage('push'){
                 sh "aws ecr get-login-password --region ${REGION} | sudo docker login --username ${ECR_USER} --password-stdin ${DOCKER_REPO}"
                 sh "docker push ${DOCKER_IMAGE}"

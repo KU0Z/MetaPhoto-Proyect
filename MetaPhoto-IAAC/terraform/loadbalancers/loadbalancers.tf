@@ -28,12 +28,12 @@ resource "aws_alb_target_group" "meta-photos-api-tg" {
 
   health_check {
     healthy_threshold   = "3"
-    interval            = "30"
+    interval            = "40"
     protocol            = "HTTP"
     matcher             = "200"
-    timeout             = "3"
+    timeout             = "10"
     path                = "/api/externalapi/healthcheck"
-    unhealthy_threshold = "2"
+    unhealthy_threshold = "3"
   }
 
   tags = {

@@ -13,7 +13,7 @@ try {
         extended: true
     }))
 
-    app.use('/externalapi', routes)
+    app.use('api/externalapi', routes)
 
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {

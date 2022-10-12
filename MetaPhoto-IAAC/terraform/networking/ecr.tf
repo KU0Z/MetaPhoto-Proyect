@@ -6,6 +6,6 @@ resource "aws_ecr_repository" "meta-photo-api" {
   }
 }
 # OUTPUTS
-output "ecr-meta-photos-api-polls" {
+output "ecr_meta_photos_api" {
   value = aws_ecr_repository.meta-photo-api.repository_url
 }

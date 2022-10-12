@@ -30,7 +30,7 @@ node ("${NODE}"){
             env.TF_VAR_key = "ecs/${ENV}"
             env.TF_VAR_aws_region = "${AWS_REGION}"
             sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/loadbalancers/${ENV}/loadbalancers_outputs.info ${WORKSPACE}/"
-            sh "aws s3 cp s3://${env.TF_VAR_e_buckecr_meta_photos_apiet}/outputs/networking/${ENV}/subnet_outputs.info ${WORKSPACE}/"
+            sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/networking/${ENV}/subnet_outputs.info ${WORKSPACE}/"
             env.TF_VAR_security_group= sh(
                 script: 'echo $(cat subnet_outputs.info| grep security_group_api| cut -d \'=\' -f 2| tr -d \'"\')',
                 returnStdout: true

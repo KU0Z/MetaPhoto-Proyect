@@ -126,6 +126,6 @@ resource "aws_route53_record" "record_apis_alb_net" {
 }
 
 # OUTPUTS
-output "api-meta-photos-tg" {
+output "api_meta_photos_tg" {
   value = aws_alb_target_group.meta-photos-api-tg.id
 }

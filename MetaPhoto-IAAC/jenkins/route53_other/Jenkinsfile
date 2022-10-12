@@ -51,7 +51,7 @@ node ("${NODE}"){
                 sh " cd ${env.TF_FOLDER} && terraform init -lock=false \
                  -backend-config='bucket=${env.TF_VAR_e_bucket}' \
                  -backend-config='key=states/${env.TF_VAR_key}/terraform.tfvars' \
-                 -backend-config='region=${env.TF_VAR_aws_region}' -force-copy"
+                 -backend-config='region=us-east-1' -force-copy"
 
                  if (env.DESTROY == "1") {
                     stage "DESTROY"

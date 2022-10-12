@@ -24,10 +24,10 @@ node ("${NODE}"){
                     ]]
                 ])
             }
-            env.TF_FOLDER = "MetaPhoto-IAAC/terraform/subnets"
+            env.TF_FOLDER = "MetaPhoto-IAAC/terraform/networking"
             env.VAR_FILE = "${ENV}.tfvars"
             env.TF_VAR_e_bucket = "${BUCKET}"
-            env.TF_VAR_key = "subnets/${ENV}"
+            env.TF_VAR_key = "networking/${ENV}"
             env.TF_VAR_aws_region = "${AWS_REGION}"
             stage("init") {
                 if (fileExists("./${env.TF_FOLDER}/.terraform/terraform.tfstate")) {

@@ -24,9 +24,9 @@ variable "security_group" {
 }
 
 # Networking
-variable "private_subnet-1" {
+variable "private_subnet_1" {
 }
-variable "private_subnet-2" {
+variable "private_subnet_2" {
 }
 # API 
 variable "meta_photos_api_tg" {

@@ -120,7 +120,7 @@ resource "aws_ecs_service" "meta_photos_api" {
 
   network_configuration {
     security_groups  = [var.security_group]
-    subnets          = [var.private_subnet-1, var.private_subnet-2]
+    subnets          = [var.private_subnet_1, var.private_subnet_2]
     assign_public_ip = false
   }
 

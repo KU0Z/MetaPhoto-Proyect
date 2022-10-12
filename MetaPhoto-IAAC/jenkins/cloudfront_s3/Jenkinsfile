@@ -1,0 +1,95 @@
+node ("${NODE}"){
+    try {
+        wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
+            cleanWs()
+            def GIT_TARGET_DIRECTORY="${WORKSPACE}"
+            def GIT_REPOSITORY="https://github.com//KU0Z/MetaPhoto-Proyect.git"
+            def GIT_BRANCH="${ENV}"
+            def GIT_KEY="access_jenkins"
+            def GIT_CHECKOUT_PATH="MetaPhoto-IAAC/terraform/"
+            stage("Checkout") {
+                checkout([
+                    $class: "GitSCM",
+                    branches: [[name: "${GIT_BRANCH}"]],
+                    extensions: [
+                    [$class: "CleanBeforeCheckout"],
+                    [$class: "SparseCheckoutPaths",
+                    sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path: "${GIT_CHECKOUT_PATH}"]]],
+                    [$class: "RelativeTargetDirectory",
+                    relativeTargetDir: "${GIT_TARGET_DIRECTORY}"]
+                    ],
+                    userRemoteConfigs: [[
+                    url: "${GIT_REPOSITORY}",
+                    credentialsId: "${GIT_KEY}"
+                    ]]
+                ])
+            }
+            env.TF_FOLDER = "MetaPhoto-IAAC/terraform/cloudfront_app"
+            env.VAR_FILE = "${ENV}.tfvars"
+            env.TF_VAR_e_bucket = "${BUCKET}"
+            env.TF_VAR_key = "cloudfront_app/${ENV}"
+            env.TF_VAR_aws_region = "${AWS_REGION}"
+            sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/route53/${ENV}/route53_outputs.info ${WORKSPACE}/"
+            env.TF_VAR_gestor_hz= sh(
+                script: 'echo $(cat route53_outputs.info| grep gestor_hz| cut -d \'=\' -f 2| tr -d \'"\')',
+                returnStdout: true
+            ).trim()
+            env.TF_VAR_app_certificate_net_arn = sh(
+                script: 'echo $(cat route53_outputs.info| grep app_certificate_net_arn| cut -d \'=\' -f 2| tr -d \'"\')',
+                returnStdout: true
+            ).trim()
+            sh "sed -i 's/gestor_hz=.*/gestor_hz=\"${env.TF_VAR_gestor_hz}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
+            sh "sed -i 's/meta_photos_certificate=.*/meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
+            sh "cat ${env.TF_FOLDER}/${env.VAR_FILE}"
+            
+            stage("init") {
+                if (fileExists("./${env.TF_FOLDER}/.terraform/terraform.tfstate")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/.terraform/terraform.tfstate"
+                }
+                if (fileExists("./${env.TF_FOLDER}/.terraform/terraform.tfstate.backup")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/.terraform/terraform.tfstate.backup"
+                }
+                if (fileExists("./${env.TF_FOLDER}/terraform.tfstate")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/terraform.tfstate"
+                }
+                if (fileExists("./${env.TF_FOLDER}/terraform.tfstate.backup")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/terraform.tfstate.backup"
+                }
+                sh " cd ${env.TF_FOLDER} && terraform init -lock=false \
+                 -backend-config='bucket=${env.TF_VAR_e_bucket}' \
+                 -backend-config='key=states/${env.TF_VAR_key}/terraform.tfvars' \
+                 -backend-config='region=${env.TF_VAR_aws_region}' -force-copy"
+
+                 if (env.DESTROY == "1") {
+                    stage "DESTROY"
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform get"
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform destroy -auto-approve -var-file='${env.VAR_FILE}'"
+                }
+                else {
+                    stage 'PLAN'
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform get"
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform plan -out=plan.out -var-file='${env.VAR_FILE}'"
+
+                    if (env.APPLY=="yes") {
+                        stage 'APPLY'
+                        sh "cd ./${env.TF_FOLDER} && set +e; terraform apply plan.out"
+                    }
+                }
+            }
+            if (env.APPLY=="yes") {
+                sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/states/${env.TF_VAR_key}/terraform.tfvars ${WORKSPACE}/terraform.tfvars"
+                sh "echo env.TF_VAR_distribution_meta_photos=\$(jq \'.outputs.distribution_meta_photos | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/cloudfront_s3_outputs.info"
+                sh "echo env.TF_VAR_meta_photos_website_meta_photos=\$(jq \'.outputs.meta_photos_website_meta_photos | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/cloudfront_s3_outputs.info"
+                sh "echo env.TF_VAR_meta_photos_website_meta_photos_arn=\$(jq \'.outputs.meta_photos_website_meta_photos_arn | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/cloudfront_s3_outputs.info"
+                sh "aws s3 cp ${WORKSPACE}/cloudfront_s3_outputs.info s3://${env.TF_VAR_e_bucket}/outputs/${env.TF_VAR_key}/cloudfront_s3_outputs.info"
+                
+            }
+        }
+    }
+    catch (error) {
+        currentBuild.result="FAILURE"
+        throw error
+    }
+    finally {
+    }
+}

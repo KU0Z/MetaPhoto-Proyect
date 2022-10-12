@@ -101,7 +101,7 @@ resource "aws_ecs_task_definition" "meta_photos_api_task_def" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = 512
   memory                   = 1024
-  task_role_arn            = aws_iam_role.ecs_service_role.a4
+  task_role_arn            = aws_iam_role.ecs_service_role.arn
   execution_role_arn       = aws_iam_role.ecs_service_role.arn
 }
 

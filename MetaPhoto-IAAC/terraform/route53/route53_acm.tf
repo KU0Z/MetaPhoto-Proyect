@@ -81,7 +81,7 @@ resource "aws_acm_certificate" "meta-photos-gestor-certificate-api" {
 output "gestor_hz" {
   value = aws_route53_zone.meta-photos-gestor-domain.id
 }
-output "" {
+output "app_certificate_net_arn" {
   value = aws_acm_certificate.meta-photos-gestor-certificate.arn
 }
 output "api_certificate_net_arn" {

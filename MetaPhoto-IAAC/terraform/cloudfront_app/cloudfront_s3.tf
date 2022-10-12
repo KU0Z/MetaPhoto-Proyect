@@ -44,9 +44,9 @@ resource "aws_s3_bucket_public_access_block" "storage_4dx_policy" {
   restrict_public_buckets = true
 }
 ## ACCESS IDENTITY
-resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  comment = "${var.meta_photos_domain}"
-} 
+# resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
+#   comment = "${var.meta_photos_domain}"
+# } 
 
 resource "aws_cloudfront_distribution" "meta_photos_distribution" {
   origin {
@@ -108,25 +108,25 @@ resource "aws_cloudfront_distribution" "meta_photos_distribution" {
     Environment = var.environment
   }
 }
-data "aws_iam_policy_document" "s3_meta_photos_meta_photos_iam_policy" {
-  statement {
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.meta-photos-website-meta_photos.arn}/*"]
+# data "aws_iam_policy_document" "s3_meta_photos_meta_photos_iam_policy" {
+#   statement {
+#     actions   = ["s3:GetObject"]
+#     resources = ["${aws_s3_bucket.meta-photos-website-meta_photos.arn}/*"]
 
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn}"]
-    }
-  }
-}
+#     principals {
+#       type        = "AWS"
+#       identifiers = ["arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn}"]
+#     }
+#   }
+# }
 
-resource "aws_s3_bucket_policy" "s3_meta_photos_meta_photos_bucket_policy" {
-  bucket = aws_s3_bucket.meta-photos-website-meta_photos.id
-  policy = data.aws_iam_policy_document.s3_meta_photos_meta_photos_iam_policy.json
-  depends_on = [
-    aws_s3_bucket.meta-photos-website-meta_photos,
-  ]
-}
+# resource "aws_s3_bucket_policy" "s3_meta_photos_meta_photos_bucket_policy" {
+#   bucket = aws_s3_bucket.meta-photos-website-meta_photos.id
+#   policy = data.aws_iam_policy_document.s3_meta_photos_meta_photos_iam_policy.json
+#   depends_on = [
+#     aws_s3_bucket.meta-photos-website-meta_photos,
+#   ]
+# }
 ########################### RECORD FOR ROUTE53 ###########################
 
 # Add record on the Route53 HostedZone to point the ALb or S3 Bucket where is the front-end of the application

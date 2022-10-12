@@ -35,12 +35,12 @@ resource "aws_iam_role_policy_attachment" "codedeploy_service_role_policy_attach
 }
 ####################### CLOUD WATCH LOG GROUP #######################
 resource "aws_cloudwatch_log_group" "meta_photos_api" {
-  name = "/ecs/meta_photos/meta_photos-api"
+  name = "/ecs/meta-photos/meta-photos-api"
 
   tags = {
     Usage       = var.Usage
     Environment = var.environment
-    Application = "meta_photos-api"
+    Application = "meta-photos-api"
   }
 }
 
@@ -65,14 +65,14 @@ resource "aws_ecs_cluster" "meta_photos_cluster_qa" {
 resource "aws_ecs_task_definition" "meta_photos_api_task_def" {
   family = "meta_photos-api"
   tags = {
-    Name        = "meta_photos-api"
+    Name        = "meta-photos-api"
     Usage       = var.Usage
     Environment = var.environment
     
   }
   container_definitions = jsonencode([
     {
-      "name" : "meta_photos-api",
+      "name" : "meta-photos-api",
       "cpu" : 512,
       "memory" : 1024,
       "image" : var.ecr_meta_photos_api,
@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "meta_photos_api_task_def" {
         "logDriver" : "awslogs",
         "secretOptions" : null,
         "options" : {
-          "awslogs-group" : "/ecs/meta_photos/meta_photos-api",
+          "awslogs-group" : "/ecs/meta-photos/meta-photos-api",
           "awslogs-region" : var.aws_region,
           "awslogs-stream-prefix" : "ecs"
         }
@@ -103,6 +103,10 @@ resource "aws_ecs_task_definition" "meta_photos_api_task_def" {
   memory                   = 1024
   task_role_arn            = aws_iam_role.ecs_service_role.arn
   execution_role_arn       = aws_iam_role.ecs_service_role.arn
+  depends_on = [
+    aws_iam_role.ecs_service_role
+  ]
+  
 }
 
 # ECS Service
@@ -129,6 +133,9 @@ resource "aws_ecs_service" "meta_photos_api" {
     container_name   = "meta-photos-api"
     container_port   = var.app_port
   }
+  depends_on = [
+    aws_ecs_task_definition.meta_photos_api_task_def
+  ]
 }
 
 # Autoscaling Target

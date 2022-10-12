@@ -42,9 +42,9 @@ node ("${NODE}"){
                 if (fileExists("./${env.TF_FOLDER}/terraform.tfstate.backup")) {
                     sh "rm -rf ./${env.TF_FOLDER}/terraform.tfstate.backup"
                 }
-                sh " cd ${env.TF_FOLDER} && terraform init \
+                sh " cd ${env.TF_FOLDER} && terraform init -lock=false \
                  -backend-config='bucket=${env.TF_VAR_e_bucket}' \
-                 -backend-config='key=${env.TF_VAR_key}/terraform.tfvars' \
+                 -backend-config='key=states/${env.TF_VAR_key}/terraform.tfvars' \
                  -backend-config='region=${env.TF_VAR_aws_region}' -force-copy"
 
                  if (env.DESTROY == "1") {

@@ -11,8 +11,8 @@ app_port= 80
 vpcCIDRblock="172.31.0.0/16"
 private-subnet-1-CIDR="172.31.1.0/27"
 private-subnet-2-CIDR="172.31.1.32/27"
-public-subnet-1-CIDR="172.31.1.64/27"
-public-subnet-2-CIDR="172.31.1.96/27"
+api-meta-photos-subnet-1-CIDR="172.31.1.64/27"
+api-meta-photos-subnet-2-CIDR="172.31.1.96/27"
 db-subnet-1-CIDR="172.31.1.128/27"
 db-subnet-2-CIDR="172.31.1.160/27"
 

@@ -6,7 +6,7 @@ node ("${NODE}"){
             def GIT_REPOSITORY="https://github.com//KU0Z/MetaPhoto-Proyect.git"
             def GIT_BRANCH="${ENV}"
             def GIT_KEY="access_jenkins"
-            def GIT_CHECKOUT_PATH="MetaPhoto-IAAC/terraform/"
+            def GIT_CHECKOUT_PATH="MetaPhoto-Api/"
             stage("Checkout") {
                 checkout([
                     $class: "GitSCM",
@@ -24,6 +24,25 @@ node ("${NODE}"){
                     ]]
                 ])
             }
+            stage("init") {
+                env.DOCKER_IMAGE = "${DOCKER_REPO}/${BUCKET_FOLDER}:${IMAGE_VERSION}"
+                env.ECR_USER = "AWS"
+            }
+            stage('build'){
+                sh "cd ${WORKSPACE} && docker build -t ${DOCKER_IMAGE} ."
+            }
+            stage('push'){
+                sh "aws ecr get-login-password --region ${REGION} | docker login --username ${ECR_USER} --password-stdin ${DOCKER_REPO}"
+                sh "docker push ${DOCKER_IMAGE}"
+            }
+            stage('deploy service'){
+                sh "aws ecs update-service --cluster ${CLUSTER} --service ${SERVICE} --force-new-deployment  "
+            }
+            stage('deploy service'){
+                sh "docker rmi ${DOCKER_IMAGE}"
+                
+            }
+            
 
         }
     }

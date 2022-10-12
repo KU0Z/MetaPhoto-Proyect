@@ -48,7 +48,7 @@ node ("${NODE}"){
                 returnStdout: true
             ).trim()
             env.TF_VAR_meta_photos_api_tg= sh(
-                script: 'echo $(cat loadbalancers_outputs.info| grep meta_photos_api_tg| cut -d \'=\' -f 2| tr -d \'"\')',
+                script: 'echo $(cat loadbalancers_outputs.info| grep api_meta_photos_tg| cut -d \'=\' -f 2| tr -d \'"\')',
                 returnStdout: true
             ).trim()
             sh "sed -i 's/security_group=.*/security_group=\"${env.TF_VAR_security_group}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"

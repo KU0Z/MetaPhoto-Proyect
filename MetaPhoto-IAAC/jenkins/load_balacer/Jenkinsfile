@@ -32,7 +32,7 @@ node ("${NODE}"){
             sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/route53/${ENV}/route53_outputs.info ${WORKSPACE}/"
             sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/networking/${ENV}/subnet_outputs.info ${WORKSPACE}/"
             env.TF_VAR_vpc= sh(
-                script: 'echo $(cat subnet_outputs.info| grep gestor_hz| cut -d \'=\' -f 2| tr -d \'"\')',
+                script: 'echo $(cat subnet_outputs.info| grep vpc| cut -d \'=\' -f 2| tr -d \'"\')',
                 returnStdout: true
             ).trim()
             env.TF_VAR_api_meta_photos_subnet_1= sh(

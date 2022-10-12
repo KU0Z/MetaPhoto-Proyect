@@ -48,7 +48,7 @@ node ("${NODE}"){
                 returnStdout: true
             ).trim()
             env.TF_VAR_hotedZone= sh(
-                script: 'echo $(cat subnet_outputs.info| grep gestor_hz| cut -d \'=\' -f 2| tr -d \'"\')',
+                script: 'echo $(cat route53_outputs.info| grep gestor_hz| cut -d \'=\' -f 2| tr -d \'"\')',
                 returnStdout: true
             ).trim()
             env.TF_VAR_app_photos_certificate= sh(

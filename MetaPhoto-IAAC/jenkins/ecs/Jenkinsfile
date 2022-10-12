@@ -52,10 +52,11 @@ node ("${NODE}"){
                 returnStdout: true
             ).trim()
             sh "sed -i 's/security_group=.*/security_group=\"${env.TF_VAR_security_group}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
-            sh "sed -i 's/ecr_meta_photos_api=.*/ecr_meta_photos_api=\"${env.TF_VAR_ecr_meta_photos_api}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
+            
             sh "sed -i 's/private_subnet_1=.*/private_subnet_1=\"${env.TF_VAR_api_meta_photos_subnet_1}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
             sh "sed -i 's/private_subnet_2=.*/private_subnet_2=\"${env.TF_VAR_api_meta_photos_subnet_2}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
             //sh "sed -i 's/meta_photos_certificate=.*/meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
+            sh "sed -i '\$ a ecr_meta_photos_api=\"${env.TF_VAR_ecr_meta_photos_api}\"'  ${env.TF_FOLDER}/${env.VAR_FILE}"
             sh "sed -i '\$ a meta_photos_api_tg=\"${env.TF_VAR_meta_photos_api_tg}\"'  ${env.TF_FOLDER}/${env.VAR_FILE}"
             sh "cat ${env.TF_FOLDER}/${env.VAR_FILE}"
             

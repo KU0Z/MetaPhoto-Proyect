@@ -19,7 +19,7 @@ aws_region="us-east-2"
 meta_photos_bucket=".s3-website.us-east-2.amazonaws.com"
 
 # Certificate
-meta_photos_certificate=""
+//meta_photos_certificate=""
 
 # Gestor Domain
 meta_photos_domain="kouz.homes"

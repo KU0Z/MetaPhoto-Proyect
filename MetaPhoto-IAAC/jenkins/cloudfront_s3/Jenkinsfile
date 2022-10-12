@@ -39,7 +39,8 @@ node ("${NODE}"){
                 returnStdout: true
             ).trim()
             sh "sed -i 's/gestor_hz=.*/gestor_hz=\"${env.TF_VAR_gestor_hz}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
-            sh "sed -i 's/meta_photos_certificate=.*/meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
+            //sh "sed -i 's/meta_photos_certificate=.*/meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
+            sh "sed -i '\$ a meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"'  ${env.TF_FOLDER}/${env.VAR_FILE}"
             sh "cat ${env.TF_FOLDER}/${env.VAR_FILE}"
             
             stage("init") {

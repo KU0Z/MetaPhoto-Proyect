@@ -8,10 +8,10 @@ variable "app_port" {}
 
 # SUBNETS CONFIGURATIONS
 variable "vpcCIDRblock" {}
-variable "private-subnet-1-CIDR" {}
-variable "private-subnet-2-CIDR" {}
 variable "api-meta-photos-subnet-1-CIDR" {}
 variable "api-meta-photos-subnet-2-CIDR" {}
+variable "public-subnet-1-CIDR" {}
+variable "public-subnet-2-CIDR" {}
 variable "db-subnet-1-CIDR" {}
 variable "db-subnet-2-CIDR" {}
 

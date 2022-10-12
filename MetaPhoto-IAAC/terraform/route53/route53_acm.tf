@@ -85,5 +85,5 @@ output "app_certificate_net_arn" {
   value = aws_acm_certificate.meta-photos-gestor-certificate.arn
 }
 output "api_certificate_net_arn" {
-  value = aws_acm_certificate.meta-photos-gestor-certificate-api
+  value = aws_acm_certificate.meta-photos-gestor-certificate-api.arn
 }

@@ -59,7 +59,7 @@ resource "aws_cloudfront_distribution" "meta_photos_distribution" {
   comment             = "Managed by Terraform"
   default_root_object = "/index.html"
   
-  aliases = ["*.${var.meta_photos_domain}"]
+  aliases = ["www.${var.meta_photos_domain}"]
   price_class = "PriceClass_All"
 
   default_cache_behavior {

@@ -30,17 +30,18 @@ node ("${NODE}"){
             env.TF_VAR_key = "cloudfront_app/${ENV}"
             env.TF_VAR_aws_region = "${AWS_REGION}"
             sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/route53/${ENV}/route53_outputs.info ${WORKSPACE}/"
+            sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/route53_other/${ENV}/route53_other_outputs.info ${WORKSPACE}/"
             env.TF_VAR_gestor_hz= sh(
                 script: 'echo $(cat route53_outputs.info| grep gestor_hz| cut -d \'=\' -f 2| tr -d \'"\')',
                 returnStdout: true
             ).trim()
-            env.TF_VAR_app_certificate_net_arn = sh(
-                script: 'echo $(cat route53_outputs.info| grep app_certificate_net_arn| cut -d \'=\' -f 2| tr -d \'"\')',
+            env.TF_VAR_app_certificate_net_arn_other = sh(
+                script: 'echo $(cat route53_other_outputs.info| grep app_certificate_net_arn_other| cut -d \'=\' -f 2| tr -d \'"\')',
                 returnStdout: true
             ).trim()
             sh "sed -i 's/gestor_hz=.*/gestor_hz=\"${env.TF_VAR_gestor_hz}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
             //sh "sed -i 's/meta_photos_certificate=.*/meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"/' ${env.TF_FOLDER}/${env.VAR_FILE}"
-            sh "sed -i '\$ a meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn}\"'  ${env.TF_FOLDER}/${env.VAR_FILE}"
+            sh "sed -i '\$ a meta_photos_certificate=\"${env.TF_VAR_app_certificate_net_arn_other}\"'  ${env.TF_FOLDER}/${env.VAR_FILE}"
             sh "cat ${env.TF_FOLDER}/${env.VAR_FILE}"
             
             stage("init") {

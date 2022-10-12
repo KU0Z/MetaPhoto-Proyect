@@ -35,14 +35,14 @@ EOF
     error_document = "index.html"
   }
 }
-resource "aws_s3_bucket_public_access_block" "storage_4dx_policy" {
-  bucket = aws_s3_bucket.meta-photos-website-meta_photos.id
+# resource "aws_s3_bucket_public_access_block" "storage_4dx_policy" {
+#   bucket = aws_s3_bucket.meta-photos-website-meta_photos.id
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
+#   block_public_acls       = true
+#   block_public_policy     = true
+#   ignore_public_acls      = true
+#   restrict_public_buckets = true
+# }
 ## ACCESS IDENTITY
 # resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 #   comment = "${var.meta_photos_domain}"

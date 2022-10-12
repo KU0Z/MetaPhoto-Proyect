@@ -1,0 +1,82 @@
+node ("${NODE}"){
+    try {
+        wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
+            cleanWs()
+            def GIT_TARGET_DIRECTORY="${WORKSPACE}"
+            def GIT_REPOSITORY="https://github.com//KU0Z/MetaPhoto-Proyect.git"
+            def GIT_BRANCH="${ENV}"
+            def GIT_KEY="access_jenkins"
+            def GIT_CHECKOUT_PATH="MetaPhoto-IAAC/terraform/"
+            stage("Checkout") {
+                checkout([
+                    $class: "GitSCM",
+                    branches: [[name: "${GIT_BRANCH}"]],
+                    extensions: [
+                    [$class: "CleanBeforeCheckout"],
+                    [$class: "SparseCheckoutPaths",
+                    sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path: "${GIT_CHECKOUT_PATH}"]]],
+                    [$class: "RelativeTargetDirectory",
+                    relativeTargetDir: "${GIT_TARGET_DIRECTORY}"]
+                    ],
+                    userRemoteConfigs: [[
+                    url: "${GIT_REPOSITORY}",
+                    credentialsId: "${GIT_KEY}"
+                    ]]
+                ])
+            }
+            env.TF_FOLDER = "MetaPhoto-IAAC/terraform/route53"
+            env.VAR_FILE = "${ENV}.tfvars"
+            env.TF_VAR_e_bucket = "${BUCKET}"
+            env.TF_VAR_key = "route53/${ENV}"
+            env.TF_VAR_aws_region = "${AWS_REGION}"
+            stage("init") {
+                if (fileExists("./${env.TF_FOLDER}/.terraform/terraform.tfstate")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/.terraform/terraform.tfstate"
+                }
+                if (fileExists("./${env.TF_FOLDER}/.terraform/terraform.tfstate.backup")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/.terraform/terraform.tfstate.backup"
+                }
+                if (fileExists("./${env.TF_FOLDER}/terraform.tfstate")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/terraform.tfstate"
+                }
+                if (fileExists("./${env.TF_FOLDER}/terraform.tfstate.backup")) {
+                    sh "rm -rf ./${env.TF_FOLDER}/terraform.tfstate.backup"
+                }
+                sh " cd ${env.TF_FOLDER} && terraform init -lock=false \
+                 -backend-config='bucket=${env.TF_VAR_e_bucket}' \
+                 -backend-config='key=states/${env.TF_VAR_key}/terraform.tfvars' \
+                 -backend-config='region=${env.TF_VAR_aws_region}' -force-copy"
+
+                 if (env.DESTROY == "1") {
+                    stage "DESTROY"
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform get"
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform destroy -auto-approve -var-file='${env.VAR_FILE}'"
+                }
+                else {
+                    stage 'PLAN'
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform get"
+                    sh "cd ./${env.TF_FOLDER} && set +e; terraform plan -out=plan.out -var-file='${env.VAR_FILE}'"
+
+                    if (env.APPLY=="yes") {
+                        stage 'APPLY'
+                        sh "cd ./${env.TF_FOLDER} && set +e; terraform apply plan.out"
+                    }
+                }
+            }
+            if (env.APPLY=="yes") {
+                sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/states/${env.TF_VAR_key}/terraform.tfvars ${WORKSPACE}/terraform.tfvars"
+                 sh "echo env.TF_VAR_gestor_hz=\$(jq \'.outputs.gestor_hz | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/route53_outputs.info"
+                sh "echo env.TF_VAR_app_certificate_net_arn=\$(jq \'.outputs.app_certificate_net_arn | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/route53_outputs.info"
+                sh "echo env.TF_VAR_api_certificate_net_arn=\$(jq \'.outputs.api_certificate_net_arn | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/route53_outputs.info"
+                sh "aws s3 cp ${WORKSPACE}/route53_outputs.info s3://${env.TF_VAR_e_bucket}/outputs/${env.TF_VAR_key}/route53_outputs.info"
+                
+            }
+        }
+    }
+    catch (error) {
+        currentBuild.result="FAILURE"
+        throw error
+    }
+    finally {
+    }
+}

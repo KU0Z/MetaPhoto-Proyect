@@ -1,0 +1,54 @@
+node ("${NODE}"){
+    try {
+        wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
+            cleanWs()
+            def GIT_TARGET_DIRECTORY="${WORKSPACE}"
+            def GIT_REPOSITORY="https://github.com//KU0Z/MetaPhoto-Proyect.git"
+            def GIT_BRANCH="${ENV}"
+            def GIT_KEY="access_jenkins"
+            def GIT_CHECKOUT_PATH="metaphoto-app/"
+            stage("Checkout") {
+                checkout([
+                    $class: "GitSCM",
+                    branches: [[name: "${GIT_BRANCH}"]],
+                    extensions: [
+                    [$class: "CleanBeforeCheckout"],
+                    [$class: "SparseCheckoutPaths",
+                    sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path: "${GIT_CHECKOUT_PATH}"]]],
+                    [$class: "RelativeTargetDirectory",
+                    relativeTargetDir: "${GIT_TARGET_DIRECTORY}"]
+                    ],
+                    userRemoteConfigs: [[
+                    url: "${GIT_REPOSITORY}",
+                    credentialsId: "${GIT_KEY}"
+                    ]]
+                ])
+                env.TF_FOLDER = "metaphoto-app"
+            }
+            stage("init") {
+                sh "cd ${WORKSPACE}/${env.TF_FOLDER} && npm install"
+            }
+            stage('build'){
+                sh "npm run build"
+            }
+            stage('Clean bucket'){
+                sh "aws s3 rm ${BUCKET} --recursive"
+            }
+            stage('upload bucket'){
+                sh "aws s3 cp dist s3://${BUCKET} --recursive"
+            }
+            stage('Clean ClodFront Distribution'){
+                sh "ws cloudfront create-invalidation --distribution-id ${SERVICE} --paths \"/*\""
+   
+            }
+            
+
+        }
+    }
+    catch (error) {
+        currentBuild.result="FAILURE"
+        throw error
+    }
+    finally {
+    }
+}

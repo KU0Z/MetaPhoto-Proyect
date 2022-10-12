@@ -24,10 +24,10 @@ node ("${NODE}"){
                     ]]
                 ])
             }
-            env.TF_FOLDER = "MetaPhoto-IAAC/terraform/load_balacer"
+            env.TF_FOLDER = "MetaPhoto-IAAC/terraform/loadbalacer"
             env.VAR_FILE = "${ENV}.tfvars"
             env.TF_VAR_e_bucket = "${BUCKET}"
-            env.TF_VAR_key = "load_balacer/${ENV}"
+            env.TF_VAR_key = "loadbalacer/${ENV}"
             env.TF_VAR_aws_region = "${AWS_REGION}"
             sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/route53/${ENV}/route53_outputs.info ${WORKSPACE}/"
             sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/outputs/networking/${ENV}/subnet_outputs.info ${WORKSPACE}/"
@@ -100,8 +100,8 @@ node ("${NODE}"){
             }
             if (env.APPLY=="yes") {
                 sh "aws s3 cp s3://${env.TF_VAR_e_bucket}/states/${env.TF_VAR_key}/terraform.tfvars ${WORKSPACE}/terraform.tfvars"
-                sh "echo env.TF_VAR_api_meta_photos_tg=\$(jq \'.outputs.api_meta_photos_tg | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/load_balacer_outputs.info"
-                sh "aws s3 cp ${WORKSPACE}/load_balacer_outputs.info s3://${env.TF_VAR_e_bucket}/outputs/${env.TF_VAR_key}/load_balacer_outputs.info"
+                sh "echo env.TF_VAR_api_meta_photos_tg=\$(jq \'.outputs.api_meta_photos_tg | .value\' ${WORKSPACE}/terraform.tfvars) >> ${WORKSPACE}/loadbalacer_outputs.info"
+                sh "aws s3 cp ${WORKSPACE}/loadbalacer_outputs.info s3://${env.TF_VAR_e_bucket}/outputs/${env.TF_VAR_key}/loadbalacer_outputs.info"
                 
             }
         }

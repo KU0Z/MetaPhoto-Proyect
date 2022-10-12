@@ -32,7 +32,7 @@ node ("${NODE}"){
                 sh "npm run build"
             }
             stage('Clean bucket'){
-                sh "aws s3 rm ${BUCKET} --recursive"
+                sh "aws s3 rm s3://${BUCKET} --recursive"
             }
             stage('upload bucket'){
                 sh "aws s3 cp dist s3://${BUCKET} --recursive"

@@ -95,7 +95,7 @@ resource "aws_ecs_task_definition" "meta_photos_api_task_def" {
       ],
       "environment" : [
         {
-          "name": "AUTH0_ISSUER",
+          "name": "NODE_ENV",
           "value": "production"
         }
       ]

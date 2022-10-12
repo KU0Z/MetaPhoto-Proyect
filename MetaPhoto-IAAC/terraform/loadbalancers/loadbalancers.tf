@@ -32,7 +32,7 @@ resource "aws_alb_target_group" "meta-photos-api-tg" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "3"
-    path                = "api/externalapi/healthcheck"
+    path                = "/api/externalapi/healthcheck"
     unhealthy_threshold = "2"
   }
 

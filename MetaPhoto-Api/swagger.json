@@ -97,10 +97,10 @@
                 "produces": ["application/json"],
                 "parameters": [
                     {
-                        "name": "title",
-                        "in": "query",
-                        "description": "title from igame",
-                        "required": false,
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id from photo",
+                        "required": true,
                         "explode": true,
                         "schema": {
                             "type": "integer",

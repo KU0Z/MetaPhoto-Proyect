@@ -54,9 +54,8 @@
         return {
           drawer: true,
           items: [
-        { id:0, icon: 'mdi-contacts', text: 'Home' , to: '/'},
-        { id:1, icon: 'mdi-content-copy', text: 'Catalogo' , to: '/photos' },
-        { id:2, icon: 'mdi-content-copy', text: 'Pedidos' , to: '/login' }
+        { id:0, icon: 'mdi-contacts', text: 'Home' , to: '/photos'},
+        { id:1, icon: 'mdi-content-copy', text: 'Photos' , to: '/photos' },
       ]
         }  
       }    

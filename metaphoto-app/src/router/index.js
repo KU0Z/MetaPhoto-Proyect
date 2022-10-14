@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import  VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+//import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login/LoginView.vue'
 import PhotoIndex from '../views/Photos/PhotoIndex.vue'
+import PhotoDetail from '../views/Photos/PhotoDetail.vue'
 import RegisterIndex from '../views/Register/RegisterIndex.vue'
 import NotFound from '../views/NotFound/404Index.vue'
 Vue.use(VueRouter) 
@@ -10,7 +11,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: PhotoIndex
   },
   {
     path: '/about',
@@ -29,6 +30,11 @@ const routes = [
     path: '/photos',
     name: 'Photos',
     component: PhotoIndex
+  },
+  {
+    path: '/photo/:id',
+    name: 'Photo Detail',
+    component: PhotoDetail
   },
   {
     path: '/register',

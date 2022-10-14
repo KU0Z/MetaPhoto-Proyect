@@ -105,7 +105,19 @@
       </v-form>
       
       </v-container>
-    <v-container fluid>
+      <v-container v-if="!charge">
+        <div class="text-center">
+          <v-progress-circular
+
+          size="100"
+          color="primary"
+          indeterminate
+          ></v-progress-circular>
+        </div>
+
+      </v-container>
+      
+    <v-container v-if="charge" fluid>
       <v-row dense>
         <v-col
           v-for="(item , index) in cards"
@@ -140,7 +152,8 @@
 
               <div > <strong>Album: </strong>{{item.album.title}}</div>
               <div> <strong>User:</strong> {{item.album.user.name}}</div>
-              <div > <strong>#: </strong>{{item.id}}</div>
+              <div > <strong>#: </strong><router-link :to="'photo/'+item.id" class="btn btn-link">{{item.id}}</router-link></div>
+              
               <div > <strong>#Album: </strong>{{item.album.id}}</div>
             </v-card-subtitle>
             <v-card-actions>
@@ -222,6 +235,7 @@
         totalItems:1,
         page: 1,
         show: false,
+        charge: false,
         search: '',
         contries: [ "Guatemala","Alemania","Inglaterra","Irlanda"],
         types: [ "Lager","Ale","Rubia","Stout"],
@@ -462,7 +476,8 @@
         this.loadPhotos(self.name,self.albumtitle,self.email,self.offset,self.limit)
       },
       loadPhotos (title,albumTitle,albumUserEmail,offset,limit) {
-        let params ={title:title,albumTitle:albumTitle,albumUserEmail:albumUserEmail,offset:offset,limit:limit }
+        this.charge=false
+        let params ={title:title,'album.title':albumTitle,'album.user.email':albumUserEmail,offset:offset,limit:limit }
         let self=this
         this.axios.get('photos',{ params })
           .then((res) => {            
@@ -474,6 +489,7 @@
               console.log(res.data)
               self.cards=res.data.payload
               self.totalItems=res.data.totalPages
+              self.charge=true
               //self.contries = JSON.parse(self.contries)
               //self.types = JSON.parse(self.types)
              

@@ -5,6 +5,12 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const routes = require('./src/router/routes')
 const app = express()
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+var fs = require('fs');
+const customCss = fs.readFileSync((process.cwd()+"/swagger.css"), 'utf8');
+// let express to use this
+
 
 try {
     app.use(cors())
@@ -14,6 +20,7 @@ try {
     }))
 
     app.use('/api/externalapi', routes)
+    app.use('/api/externalapi/', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {customCss}));
 
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {

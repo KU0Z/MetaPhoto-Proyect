@@ -28,16 +28,16 @@ node ("${NODE}"){
             stage("init") {
                 sh "cd ${WORKSPACE}/${env.TF_FOLDER} && npm install"
             }
-            stage('build'){
-                sh "cd ${WORKSPACE}/${env.TF_FOLDER} && npm run build"
-            }
-            stage('Clean bucket'){
-                sh "cd ${WORKSPACE}/${env.TF_FOLDER} && aws s3 rm s3://${BUCKET} --recursive"
-            }
-            stage('upload bucket'){
-                sh "ls"
-                sh "cd ${WORKSPACE}/${env.TF_FOLDER} && aws s3 cp dist s3://${BUCKET} --recursive"
-            }
+            // stage('build'){
+            //     sh "cd ${WORKSPACE}/${env.TF_FOLDER} && npm run build"
+            // }
+            // stage('Clean bucket'){
+            //     sh "cd ${WORKSPACE}/${env.TF_FOLDER} && aws s3 rm s3://${BUCKET} --recursive"
+            // }
+            // stage('upload bucket'){
+            //     sh "ls"
+            //     sh "cd ${WORKSPACE}/${env.TF_FOLDER} && aws s3 cp dist s3://${BUCKET} --recursive"
+            // }
             stage('Clean ClodFront Distribution'){
                 sh "aws cloudfront create-invalidation --distribution-id ${SERVICE} --paths \"/*\""
    
